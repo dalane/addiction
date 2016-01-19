@@ -15,11 +15,13 @@ Suggested approach is to create a file called "dependencies.js" and in it map al
 var container = require('dalane-node-ioc-container');
 
 container.add('foo', function () {
+  var Foo = require('./path/to/foo');
   return new Foo();
 });
 
 container.add('bar', function () {
   // return a new Bar object that uses constructor injection for its Foo dependency
+  var Bar = require('./path/to/bar');
   return new Bar(container.get('foo'));
 });
 
