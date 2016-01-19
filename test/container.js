@@ -1,6 +1,17 @@
 var Container = require("../lib/Container");
 
 var assert = require('assert');
+
+var mock = function () {
+    this._name = 'foo';
+    this.setName = function (name) {
+        this._name = name;
+    };
+    this.getName = function () {
+        return this._name;
+    };
+};
+
 describe('Container', function() {
     var container = new Container();
     describe("#add(name, dependency)", function () {
@@ -68,6 +79,42 @@ describe('Container', function() {
             });
         });
     });
+    describe('#callable(callable)', function () {
+        it("Should throw a TypeError if attempting to create a callable using a non function.", function () {
+            assert.throws(function () {
+                container.callable('string');
+            }, function (err) {
+                return (err.name == 'TypeError');
+            });
+        });
+        it("should accept a function as the callable parameter", function () {
+            var error = false;
+            try {
+                container.callable(function () {});
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+        });
+    });
+    describe('#factory(factory)', function () {
+        it("Should throw a TypeError if attempting to create a factory using a non function.", function () {
+            assert.throws(function () {
+                container.callable('string');
+            }, function (err) {
+                return (err.name == 'TypeError');
+            });
+        });
+        it("should accept a function as the factory parameter", function () {
+            var error = false;
+            try {
+                container.factory(function () {});
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+        });
+    });
     describe('#get(name)', function () {
         it('Should throw SyntaxError when the name parameter is not provided.', function () {
             assert.throws(function () {
@@ -106,24 +153,30 @@ describe('Container', function() {
             assert.equal('name', result.name);
         });
         it('Should return the same object that has already been created rather than create a new object', function () {
-            var mock = function () {
-                this._name = 'foo';
-                this.setName = function (name) {
-                    this._name = name;
-                };
-                this.getName = function () {
-                    return this._name;
-                };
-            };
             container.add('mock', function () {
                 return new mock();
             });
             var result_one = container.get('mock');
-            assert.equal('foo', result_one.getName());
-            result_one.setName('bar');
-            assert.equal('bar', result_one.getName());
             var result_two = container.get('mock');
-            assert.equal('bar', result_two.getName());
+            assert.equal(true, (result_one == result_two));
+        });
+        it('Should return a callable function that has been wrapped by #callable(callable) before being added.', function () {
+            container.add('callable', container.callable(function () {
+                return 'foo';
+            }));
+            var result = container.get('callable');
+            assert.equal('function', typeof result);
+            assert.equal('foo', result());
+        });
+        it('Should return a new object if the function has been wrapped by #factory(factory) before being added.', function () {
+            var test_function = function () {
+                return new mock();
+            };
+            var factory = container.factory(test_function);
+            container.add('factory', factory);
+            var result_one = container.get('factory');
+            var result_two = container.get('factory');
+            assert.equal(true, (result_one != result_two))
         });
     });
 });

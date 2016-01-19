@@ -1,6 +1,6 @@
 {
   "name": "dalane-addiction",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/Container.js",
   "scripts": {
