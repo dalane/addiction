@@ -1,5 +1,5 @@
 {
-  "name": "dalane-node-dic",
+  "name": "dalane-addiction",
   "version": "0.1.1",
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/Container.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dalane/node-dic.git"
+    "url": "git+https://github.com/dalane/addiction.git"
   },  "devDependencies" : {
     "mocha": "2.3.x"
   },
   "author": "Dallas Ewing",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/dalane/node-dic/issues"
+    "url": "https://github.com/dalane/addiction/issues"
   },
-  "homepage": "https://github.com/dalane/node-dic#readme"
+  "homepage": "https://github.com/dalane/addiction#readme"
 }
