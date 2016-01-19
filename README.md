@@ -6,7 +6,7 @@ A small dependency injection container for Node.js quickly cobbled together afte
 Installation via NPM is recommended as follows.
 
 ```shell
-npm install dalane-node-dic
+npm install dalane-addiction
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ Suggested approach is to create a file called "dependencies.js" and in it map al
 
 ```javascript
 // dependencies.js
-var container = require('dalane-node-ioc-container');
+var container = require('dalane-addiction');
 
 container.add('foo', function () {
   var Foo = require('./path/to/foo');
