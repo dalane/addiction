@@ -22,6 +22,8 @@ container.add('bar', function () {
   // return a new Bar object that uses constructor injection for its Foo dependency
   return new Bar(container.get('foo'));
 });
+
+module.exports = container;
 ```
 
 ** Note, this package is in development and not available on NPM yet.**
