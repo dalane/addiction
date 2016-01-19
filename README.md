@@ -2,7 +2,12 @@
 A small dependency injection container for Node.js quickly cobbled together after spending a little bit of time using require statements and realising that I could end up in dependency hell pretty quickly. It was inspired by the Pimple PHP dependency injection container.
 
 ## Installing
-node-ioc-container will be setup as an NPM package and when available will be installed via NPM.
+
+Installation via NPM is recommended as follows.
+
+```shell
+npm install dalane-node-dic
+```
 
 ## Usage
 
