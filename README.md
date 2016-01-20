@@ -96,12 +96,14 @@ module.exports = container;
 
 ### Adding service locators
 
-Service objects are obtained through service locators. These service locators are functions that return a service object. Including the reference to the required library within the function 
-means that node.js will only include this file when the service is invoked.
+Service objects are obtained through service locators. These service locators are functions that return a service 
+object.
 
 ```javascript
 var foo_locator = function () {
+    // include the require statement here so that the reference is only loaded when the function is invoked
     var Foo = require('./path/to/foo');
+    // the service locator returns the created service object
     return new Foo();
 };
 container.add('foo', foo_locator);
@@ -116,14 +118,17 @@ var foo = container.get('foo');
 ```
 
 The first time a service object is requested it will be invoked and the result will be cached. Subsequent requests
-will return the cached value (making it a singleton). To return a new service object for every request, the service 
-function needs to be added using the factory wrapper.
+will return the cached value (making it a singleton). To return a newly created service object for every request, the service 
+locator needs to be first added using the #factory() wrapper before being added to the container.
 
 ```javascript
-container.add('bar', container.factory(function () {
+// wrap the service locator using #factory()
+var factory = container.factory(function () {
     var Bar = require('./path/to/bar');
     return new Bar();
 });
+// add the factory to the container
+container.add('bar', factory);
 ```
 
 ### Using service objects
@@ -132,13 +137,13 @@ To use dependency injection, you need to write your object prototypes appropriat
 using the method #get().
 
 ```javascript
-container.get('name_of_your_service');
+var service_object = container.get('name_of_your_service');
 ```
 
 Which can then injected into each client object using either constructor injection.
 
 ```javascript
-// bar.js
+// bar.js with constructor injection of the service object Foo
 module.exports = function (foo) {
     this._foo = foo;
 };
@@ -146,6 +151,7 @@ module.exports = function (foo) {
 // dependencies.js
 container.add('bar', function () {
     var Bar = require('./path/to/bar');
+    // use #get() to obtain the service object Foo and inject using the constructor
     return new Bar(container.get('foo'));
 });
 ```
@@ -153,7 +159,7 @@ container.add('bar', function () {
 Or setter injection.
 
 ```javascript
-// bar.js
+// bar.js with setter injection of the service object Foo
 module.exports = function () {
     this._foo;
     this.setFoo = function (foo) {
@@ -165,6 +171,7 @@ module.exports = function () {
 container.add('bar', function () {
     var Bar = require('./path/to/bar');
     var bar = new Bar();
+    // use #get() to obtain the service object Foo and inject using the setter #setFoo()
     bar.setFoo(container.get('foo');
     return bar;
 });
@@ -198,7 +205,7 @@ container.add('function_as_parameter', container.callable(function () {
 
 Parameters are obtained from the container also using the #get() method.
 
-##About the developer
+##About us
 
 We are [Dalane Consulting Ltd](http://www.dalane.co.uk). A project management consulting firm based in the United 
 Kingdom developing tools for our own and our clients use.

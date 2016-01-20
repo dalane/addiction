@@ -204,4 +204,32 @@ describe('Container', function() {
             assert.equal(true, expected_foo instanceof Foo);
         });
     });
+    describe('#remove(name)', function () {
+        it('Should throw SyntaxError when the name parameter is not provided.', function () {
+            assert.throws(function () {
+                container.remove();
+            }, function (err) {
+                return (err.name == 'SyntaxError');
+            });
+        });
+        it('Should throw RangeError when the name doesn\'t exist.', function () {
+            assert.throws(function () {
+                container.remove('non-existent-name');
+            }, function (err) {
+                return (err.name == 'RangeError');
+            });
+        });
+        it('Should throw a RangeError when #get() is called after service locator is removed.', function () {
+            container.add('service-to-remove', function () {
+                return true;
+            });
+            assert.equal(true, container.get('service-to-remove'));
+            container.remove('service-to-remove');
+            assert.throws(function () {
+                container.remove('service-to-remove');
+            }, function (err) {
+                return (err.name == 'RangeError');
+            });
+        });
+    });
 });
