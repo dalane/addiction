@@ -1,36 +1,204 @@
 # A Dependency Injection Container for Node.js Applications
-A small dependency injection container for Node.js quickly cobbled together after spending a little bit of time using require statements and realising that I could end up in dependency hell pretty quickly. It was inspired by the Pimple PHP dependency injection container.
+
+This is a small dependency injection container for Node.js that was quickly cobbled together after spending a little bit
+of time using require statements and realising that it could pretty quickly lead to dependency hell. It was inspired by
+the Pimple PHP dependency injection container.
+
+## What is dependency injection?
+
+Often, developers will create required service objects within the client object.
+
+```javascript
+// The client object Foo needs the Bar service object and creates it in the constructor
+var Foo = function () {
+    this.bar = new Bar();
+};
+```
+
+However, using dependency injection the creation of the service object is done outside of the client and then 
+"injected" into the client either through the constructor ("constructor injection") or a setter ("setter injection").
+
+```javascript
+// the client object Foo needs the Bar service object. Bar is created outside Foo and then injected using 
+// a constructor parameter
+var Foo = function (bar) {
+    this.bar = bar;
+};
+
+var bar = new Bar();
+var foo = new Foo(bar);
+```
+
+### Why use dependency injection
+
+The reason why you should use dependency injection is that it offers: flexibility, reusability and testability.
+
+#### Flexibility
+
+Your objects are no longer bound to one explicit class. You can provide whatever service object you want as long as it 
+implements the same interface that the client object depends on.
+
+#### Reusability
+
+Service objects can be easily reused, we can decide to use the same instance of an object or create a new instance as
+required for the client use case.
+
+#### Testability
+
+Injected dependencies improve the testability of classes through unit testing. 
 
 ## Installing
 
-Installation via NPM is recommended as follows.
+Installation via NPM (**note, this package is in development and not available on NPM yet**) is recommended as follows.
 
 ```shell
 npm install dalane-addiction
 ```
 
+You can run the unit tests
+
+```shell
+npm test
+```
+
+And run the simple example app: ./example/main.js
+
+```shell
+npm start
+```
+
+This will output to the command line "Hello World from Foo!".
+
 ## Usage
 
-Suggested approach is to create a file called "dependencies.js" and in it map all of the dependencies your project has.
+The dependency injection container can be used to:
+ 
+- add service locators (functions that return service objects);
+- add parameters;
+- obtain service objects; and
+- retrieve stored parameters.
 
-**Note, this package is in development and not available on NPM yet.**
+It is suggested that the dependency injection container is populated with the service locators and parameters in a single
+location. An example would be to use a "dependencies.js" file and then use "require('./path/to/dependencies.js')" in your
+main application file.
 
 ```javascript
 // dependencies.js
-var container = require('dalane-addiction');
 
-container.add('foo', function () {
-  var Foo = require('./path/to/foo');
-  return new Foo();
-});
+var Container = require('dalane-addiction');
+var container = new Container();
 
-container.add('bar', function () {
-  // return a new Bar object that uses constructor injection for its Foo dependency
-  var Bar = require('./path/to/bar');
-  return new Bar(container.get('foo'));
-});
+// register service locators and parameters
+...
 
 module.exports = container;
 ```
 
-**Note, this package is in development and not available on NPM yet.**
+### Adding service locators
+
+Service objects are obtained through service locators. These service locators are functions that return a service object. Including the reference to the required library within the function 
+means that node.js will only include this file when the service is invoked.
+
+```javascript
+var foo_locator = function () {
+    var Foo = require('./path/to/foo');
+    return new Foo();
+};
+container.add('foo', foo_locator);
+```
+
+### Obtaining service objects
+
+Obtaining a service object is simply a matter of calling the #get() method with the name of the service locator provided as the parameter.
+
+```javascript
+var foo = container.get('foo');
+```
+
+The first time a service object is requested it will be invoked and the result will be cached. Subsequent requests
+will return the cached value (making it a singleton). To return a new service object for every request, the service 
+function needs to be added using the factory wrapper.
+
+```javascript
+container.add('bar', container.factory(function () {
+    var Bar = require('./path/to/bar');
+    return new Bar();
+});
+```
+
+### Using service objects
+
+To use dependency injection, you need to write your object prototypes appropriately. Service objects can be obtained
+using the method #get().
+
+```javascript
+container.get('name_of_your_service');
+```
+
+Which can then injected into each client object using either constructor injection.
+
+```javascript
+// bar.js
+module.exports = function (foo) {
+    this._foo = foo;
+};
+
+// dependencies.js
+container.add('bar', function () {
+    var Bar = require('./path/to/bar');
+    return new Bar(container.get('foo'));
+});
+```
+
+Or setter injection.
+
+```javascript
+// bar.js
+module.exports = function () {
+    this._foo;
+    this.setFoo = function (foo) {
+        this._foo = foo;
+    };
+};
+
+// dependencies.js
+container.add('bar', function () {
+    var Bar = require('./path/to/bar');
+    var bar = new Bar();
+    bar.setFoo(container.get('foo');
+    return bar;
+});
+```
+
+### Parameters
+
+Parameters can be added to the container too.
+
+```javascript
+// string
+container.add('author', 'Dalane Consulting Ltd');
+// numeric
+container.add('max_login_attempts', 5);
+// boolean
+container.add('dev-mode', true);
+// object hash
+container.add('config', {
+    website: 'http://www.dalane.co.uk'
+});
+```
+
+Functions can also be added as parameters. However, to prevent them from being invoked by the container they need to be
+added using the callable wrapper.
+
+```javascript
+container.add('function_as_parameter', container.callable(function () {
+    // do something
+});
+```
+
+Parameters are obtained from the container also using the #get() method.
+
+##About the developer
+
+We are [Dalane Consulting Ltd](http://www.dalane.co.uk). A project management consulting firm based in the United 
+Kingdom developing tools for our own and our clients use.

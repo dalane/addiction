@@ -4,6 +4,7 @@
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/Container.js",
   "scripts": {
+    "start": "node ./example/main.js",
     "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
