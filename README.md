@@ -4,7 +4,9 @@ This is a small dependency injection container for Node.js that was quickly cobb
 of time using require statements and realising that it could pretty quickly lead to dependency hell. It was inspired by
 the Pimple PHP dependency injection container.
 
-## What is dependency injection?
+## Dependency Injection
+
+### What is dependency injection?
 
 Often, developers will create required service objects within the client object.
 
@@ -51,6 +53,11 @@ any changes to the code haven't introduced any problems. Since we're testing a s
 fake dependencies (stubs and mocks) are used and these are injected into the code being tested. By using fake
 dependencies we're reducing the chance of any side effects that might be caused by other libraries being introduced
 into the test.
+
+### Using a dependency injection container
+
+When all service locators are defined and retrieved using a dependency injection container all of the dependencies 
+for a program are automatically managed whenever the program is run.
 
 ## Installing
 
@@ -203,6 +210,7 @@ Functions can also be added as parameters. However, to prevent them from being i
 added using the callable wrapper.
 
 ```javascript
+// wrap the function to be returned as a parameter using #callable()
 container.add('function_as_parameter', container.callable(function () {
     // do something
 });
