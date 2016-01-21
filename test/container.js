@@ -27,7 +27,7 @@ var Bar = function (foo) {
 
 describe('Container', function() {
     var container = new Container();
-    describe("#add(name, dependency)", function () {
+    describe("#add()", function () {
         it ('Should throw a TypeError if name is not a string.', function () {
             // test object
             assert.throws(function () {
@@ -90,6 +90,12 @@ describe('Container', function() {
             }, function (err) {
                 return (err.name == 'TypeError');
             });
+        });
+        it("Should throw a TypeError if tags is not an array", function () {
+            assert.fail();
+        });
+        it("Should throw a TypeError if any tag is not a string", function () {
+            assert.fail();
         });
     });
     describe('#callable(callable)', function () {
