@@ -64,7 +64,7 @@ for a program are automatically managed whenever the program is run.
 Installation via [NPM](https://www.npmjs.com) is recommended as follows.
 
 ```shell
-npm install dalane-addiction
+npm install dalane-node-di --save
 ```
 
 You can run the unit tests
