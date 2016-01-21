@@ -1,5 +1,5 @@
 {
-  "name": "dalane-node-di",
+  "name": "@dalane/node-di",
   "version": "1.0.0",
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/Container.js",
