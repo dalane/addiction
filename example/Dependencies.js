@@ -1,6 +1,9 @@
 "use strict";
 
+// get the object class for the dependency injection container
 var Container = require('../lib/Container');
+
+// instantiate a new container
 var container = new Container();
 
 // add the configuration object to the container as a parameter
@@ -15,6 +18,7 @@ container.add('foo', function () {
     var foo = new Foo();
     // config is retrieved from the container and injected through a setter method
     foo.setConfig(container.get('config'));
+    // return the created service object
     return foo;
 });
 
@@ -22,7 +26,7 @@ container.add('foo', function () {
 container.add('bar', function () {
     // require the reference to the Bar object class
     var Bar = require('./bar');
-    // foo is retrieved from the container and injected through the constructor
+    // foo is retrieved from the container and injected through the constructor and the service object is returned
     return new Bar(container.get('foo'));
 });
 

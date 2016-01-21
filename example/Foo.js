@@ -1,5 +1,6 @@
 "use strict";
 
+// define Foo with the configuration parameter set through a setter function #setConfig()
 var Foo = function () {
     this._config = null;
     this.setConfig = function (config) {
