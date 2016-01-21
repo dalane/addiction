@@ -29,14 +29,14 @@ var bar = new Bar();
 var foo = new Foo(bar);
 ```
 
-### Why use dependency injection
+### Why use dependency injection?
 
 The reason why you should use dependency injection is that it offers: flexibility, reusability and testability.
 
 #### Flexibility
 
-Your objects are no longer bound to one explicit class. You can provide whatever service object you want as long as it 
-implements the same interface that the client object depends on.
+Your objects are no longer bound to one explicit class. As your application evolves you can provide whatever service object you want (as long as it 
+implements the same interface that the client object depends on).
 
 #### Reusability
 
@@ -45,11 +45,16 @@ required for the client use case.
 
 #### Testability
 
-Injected dependencies improve the testability of classes through unit testing. 
+Injected dependencies improve the testability of classes through unit testing. The goal of unit testing is to test each
+part of the program in isolation to show that it is working correctly. It allows you to find problems early and test
+any changes to the code haven't introduced any problems. Since we're testing a single part of the program typically
+fake dependencies (stubs and mocks) are used and these are injected into the code being tested. By using fake
+dependencies we're reducing the chance of any side effects that might be caused by other libraries being introduced
+into the test.
 
 ## Installing
 
-Installation via NPM (**note, this package is in development and not available on NPM yet**) is recommended as follows.
+Installation via [NPM](https://www.npmjs.com) is recommended as follows.
 
 ```shell
 npm install dalane-addiction
@@ -61,7 +66,7 @@ You can run the unit tests
 npm test
 ```
 
-And run the simple example app: ./example/main.js
+And run the (very) basic example app found in "example/main.js".
 
 ```shell
 npm start
