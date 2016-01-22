@@ -26,9 +26,21 @@ var Bar = function (foo) {
 };
 
 describe('Container', function() {
-    var container = new Container();
     describe("#add()", function () {
+        it("Should accept name as a string value", function () {
+            var container = new Container();
+            // test string name
+            var error = false;
+            try {
+                var name = 'string';
+                container.add(name, function () {});
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+        });
         it ('Should throw a TypeError if name is not a string.', function () {
+            var container = new Container();
             // test object
             assert.throws(function () {
                 var name = new Object();
@@ -71,18 +83,9 @@ describe('Container', function() {
             }, function (err) {
                 return (err.name == 'TypeError');
             });
-            // test string
-            var error = false;
-            try {
-                var name = 'string';
-                container.add(name, {});
-            } catch (err) {
-                var error = true;
-            }
-            assert.equal(false, error);
         });
         it("Should throw a TypeError if the dependency is undefined.", function () {
-            // TODO write test for missing dependency parameter
+            var container = new Container();
             assert.throws(function () {
                 var name = "string";
                 var dependency;
@@ -91,15 +94,75 @@ describe('Container', function() {
                 return (err.name == 'TypeError');
             });
         });
-        it("Should throw a TypeError if tags is not an array", function () {
-            assert.fail();
+        it("Should accept an array of string values as tags", function () {
+            var container = new Container();
+            var errors = false;
+            try {
+                var tags = ['foo', 'bar'];
+                container.add('passing_tags', function () {}, tags);
+            } catch (err) {
+                errors = true;
+            }
+            assert.equal(false, errors);
         });
         it("Should throw a TypeError if any tag is not a string", function () {
-            assert.fail();
+            var container = new Container();
+            assert.throws(function () {
+                container.add('tag_is_not_a_string', function () {}, ['string', 1]);
+            }, function (err) {
+                return (err.name == 'TypeError' && err.message == 'Tag names must be string values.');
+            });
+        });
+        it("Should throw a SyntaxError if tags is an empty array.", function () {
+            var container = new Container();
+            assert.throws(function () {
+                container.add('empty_tags', function () {}, []);
+            }, function (err) {
+                return ('SyntaxError' == err.name && err.message == 'Tags array is empty.');
+            }, "tags array is empty.");
+        });
+        it("Should throw a TypeError if tags is not an array", function () {
+            var container = new Container();
+            assert.throws(function () {
+                container.add('string_tags', function () {}, 'tag');
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is a string.");
+            assert.throws(function () {
+                container.add('number_tags', function () {}, 1);
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is a number.");
+            assert.throws(function () {
+                container.add('object_tags', function () {}, new Object());
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is an object.");
+            assert.throws(function () {
+                container.add('function_tags', function () {}, function () {});
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is a function.");
+            assert.throws(function () {
+                container.add('hash_tags', function () {}, {});
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is a hash.");
+            assert.throws(function () {
+                container.add('boolean_tags', function () {}, false);
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is a boolean.");
+            assert.throws(function () {
+                container.add('null_tags', function () {}, null);
+            }, function (err) {
+                return ('TypeError' == err.name && err.message == 'Tags must be an array.');
+            }, "tags is null.");
         });
     });
-    describe('#callable(callable)', function () {
+    describe('#callable()', function () {
         it("Should throw a TypeError if attempting to create a callable using a non function.", function () {
+            var container = new Container();
             assert.throws(function () {
                 container.callable('string');
             }, function (err) {
@@ -107,6 +170,7 @@ describe('Container', function() {
             });
         });
         it("should accept a function as the callable parameter", function () {
+            var container = new Container();
             var error = false;
             try {
                 container.callable(function () {});
@@ -116,8 +180,9 @@ describe('Container', function() {
             assert.equal(false, error);
         });
     });
-    describe('#factory(factory)', function () {
+    describe('#factory()', function () {
         it("Should throw a TypeError if attempting to create a factory using a non function.", function () {
+            var container = new Container();
             assert.throws(function () {
                 container.factory('string');
             }, function (err) {
@@ -125,6 +190,7 @@ describe('Container', function() {
             });
         });
         it("should accept a function as the factory parameter", function () {
+            var container = new Container();
             var error = false;
             try {
                 container.factory(function () {});
@@ -134,22 +200,27 @@ describe('Container', function() {
             assert.equal(false, error);
         });
     });
-    describe('#get(name)', function () {
+    describe('#get()', function () {
         it('Should throw SyntaxError when the name parameter is not provided.', function () {
+            var container = new Container();
             assert.throws(function () {
                 container.get();
             }, function (err) {
-                return (err.name == 'SyntaxError');
+                return (err.name == 'SyntaxError' && err.message == 'The name parameter is required.');
             });
         });
         it('Should throw RangeError when the name doesn\'t exist.', function () {
+            var container = new Container();
+            // name to test as this appears in the error message
+            var name = 'non-existent-name';
             assert.throws(function () {
-                container.get('non-existent-name');
+                container.get(name);
             }, function (err) {
-                return (err.name == 'RangeError');
+                return (err.name == 'RangeError' && err.message == 'The requested dependency "' + name + '" has not been registered. Try checking spelling or correct use of upper and lower case characters.');
             });
         });
         it('Should return the service object if a service locator function was added.', function () {
+            var container = new Container();
             container.add('object_factory', function () {
                 return new Object();
             });
@@ -157,14 +228,17 @@ describe('Container', function() {
             assert.equal('object', typeof result);
         });
         it('Should return the string value if a string parameter was added.', function () {
+            var container = new Container();
             container.add('string', 'string_value');
             assert.equal('string_value', container.get('string'));
         });
         it('Should return the numeric value if a number parameter was added.', function () {
+            var container = new Container();
             container.add('number', 1);
             assert.equal(1, container.get('number'));
         });
         it('Should return the object hash if a hash parameter was added.', function () {
+            var container = new Container();
             container.add('hash', {
                 name: 'name'
             });
@@ -172,6 +246,7 @@ describe('Container', function() {
             assert.equal('name', result.name);
         });
         it('Should return a cached service object rather than invoke the service locator.', function () {
+            var container = new Container();
             container.add('mock', function () {
                 return new mock();
             });
@@ -180,6 +255,7 @@ describe('Container', function() {
             assert.equal(true, (result_one == result_two));
         });
         it('Should return the function that has been wrapped by #callable(callable) before being added.', function () {
+            var container = new Container();
             container.add('callable', container.callable(function () {
                 return '_foo';
             }));
@@ -188,6 +264,7 @@ describe('Container', function() {
             assert.equal('_foo', result());
         });
         it('Should return a new service object if the function has been wrapped by #factory(factory) before being added.', function () {
+            var container = new Container();
             var test_function = function () {
                 return new mock();
             };
@@ -198,6 +275,7 @@ describe('Container', function() {
             assert.equal(true, (result_one != result_two))
         });
         it('Should return an object with all of its dependencies automatically populated.', function () {
+            var container = new Container();
             container.add('_foo', function () {
                 return new Foo();
             });
@@ -210,31 +288,52 @@ describe('Container', function() {
             assert.equal(true, expected_foo instanceof Foo);
         });
     });
-    describe('#remove(name)', function () {
+    describe('#tagged()', function () {
+        it("Should return an array of service names tagged by a specific tag", function () {
+            var container = new Container();
+            container.add('foo', function () {}, ['tagged', 'foo']);
+            container.add('bar', function () {}, ['tagged', 'bar']);
+            var tagged = container.tagged('tagged');
+            assert.equal(true, Array.isArray(tagged));
+            assert.equal(true, tagged.length == 2);
+            assert.equal(true, tagged.some(function (value) {
+                return (value == 'foo');
+            }));
+            assert.equal(true, tagged.some(function (value) {
+                return (value == 'bar');
+            }));
+        });
+    });
+    describe('#remove()', function () {
         it('Should throw SyntaxError when the name parameter is not provided.', function () {
+            var container = new Container();
             assert.throws(function () {
                 container.remove();
             }, function (err) {
-                return (err.name == 'SyntaxError');
+                return (err.name == 'SyntaxError' && err.message == 'The name parameter is required.');
             });
         });
         it('Should throw RangeError when the name doesn\'t exist.', function () {
+            var container = new Container();
+            var non_existent_name = 'non-existent-name';
             assert.throws(function () {
-                container.remove('non-existent-name');
+                container.remove(non_existent_name);
             }, function (err) {
-                return (err.name == 'RangeError');
+                return (err.name == 'RangeError' && err.message == 'The requested dependency "' + non_existent_name + '" has not been registered. Try checking spelling or correct use of upper and lower case characters.');
             });
         });
         it('Should throw a RangeError when #get() is called after service locator is removed.', function () {
-            container.add('service-to-remove', function () {
+            var container = new Container();
+            var name = 'service-to-remove';
+            container.add(name, function () {
                 return true;
             });
-            assert.equal(true, container.get('service-to-remove'));
-            container.remove('service-to-remove');
+            assert.equal(true, container.get(name));
+            container.remove(name);
             assert.throws(function () {
-                container.remove('service-to-remove');
+                container.remove(name);
             }, function (err) {
-                return (err.name == 'RangeError');
+                return (err.name == 'RangeError' && err.message == 'The requested dependency "' + name + '" has not been registered. Try checking spelling or correct use of upper and lower case characters.');
             });
         });
     });
