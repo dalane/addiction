@@ -224,13 +224,14 @@ It is possible to add tags to service locators, parameters, factories and callab
 when adding the dependency to the container.
 
 ```javascript
-container.add('dependency', dependency, ['tag_1', 'tag_2']);
+container.add('foo', foo_locator, ['tag_1', 'tag_2']);
 ```
 
 To retrieve a list of dependencies by tag simply use the #tagged method which will return an array.
 
 ```javascript
 var array_of_dependency_names = container.tagged('tag_1');
+// returns ['foo']
 ```
 
 ##About us
