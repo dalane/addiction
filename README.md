@@ -218,6 +218,21 @@ container.add('function_as_parameter', container.callable(function () {
 
 Parameters are obtained from the container also using the #get() method.
 
+### Tagging
+
+It is possible to add tags to service locators, parameters, factories and callables. Simply include an array of tag names
+when adding the dependency to the container.
+
+```javascript
+container.add('dependency', dependency, ['tag_1', 'tag_2']);
+```
+
+To retrieve a list of dependencies by tag simply use the #tagged method which will return an array.
+
+```javascript
+var array_of_dependency_names = container.tagged('tag_1');
+```
+
 ##About us
 
 We are [Dalane Consulting Ltd](http://www.dalane.co.uk). A project management consulting firm based in the United 

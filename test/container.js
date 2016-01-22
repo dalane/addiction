@@ -113,14 +113,6 @@ describe('Container', function() {
                 return (err.name == 'TypeError' && err.message == 'Tag names must be string values.');
             });
         });
-        it("Should throw a SyntaxError if tags is an empty array.", function () {
-            var container = new Container();
-            assert.throws(function () {
-                container.add('empty_tags', function () {}, []);
-            }, function (err) {
-                return ('SyntaxError' == err.name && err.message == 'Tags array is empty.');
-            }, "tags array is empty.");
-        });
         it("Should throw a TypeError if tags is not an array", function () {
             var container = new Container();
             assert.throws(function () {
@@ -359,6 +351,41 @@ describe('Container', function() {
         });
     });
     describe('#remove()', function () {
+        it("Should remove references to service locators, factories, callables and parameters", function () {
+            var container = new Container();
+            container.add('factory', container.factory(function () {}));
+            container.add('callable', container.callable(function () {}));
+            container.add('parameter', 'string');
+            container.add('service', function () {});
+            var error = false;
+            try {
+                container.remove('factory');
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+            var error = false;
+            try {
+                container.remove('callable');
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+            var error = false;
+            try {
+                container.remove('parameter');
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+            var error = false;
+            try {
+                container.remove('service');
+            } catch (err) {
+                error = true;
+            }
+            assert.equal(false, error);
+        });
         it('Should throw SyntaxError when the name parameter is not provided', function () {
             var container = new Container();
             assert.throws(function () {
