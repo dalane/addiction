@@ -3,18 +3,19 @@
   "version": "1.0.0",
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/Container.js",
-  "author": "Dalane Consulting Ltd",
+  "author": "Dallas Ewing",
   "scripts": {
     "start": "node ./example/main.js",
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- -R spec"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dalane/di.git"
-  },  "devDependencies" : {
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.2",
     "mocha": "2.3.x"
   },
-  "author": "Dallas Ewing",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/dalane/di/issues"
