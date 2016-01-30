@@ -79,7 +79,8 @@ And run the (very) basic example app found in "example/main.js".
 npm start
 ```
 
-This will output to the command line "Hello World from Foo!".
+This will output to the command line "Hello World from Foo!". A quick look around the files (starting with main.js)
+will give an idea of how to use the container.
 
 ## Usage
 
@@ -119,6 +120,12 @@ var foo_locator = function () {
     return new Foo();
 };
 container.add('foo', foo_locator);
+```
+
+Service locators can be explicitly added to the container as well using the #service wrapper function.
+
+```javascript
+container.add('foo', container.service(foo_locator));
 ```
 
 ### Obtaining service objects
@@ -161,10 +168,10 @@ module.exports = function (foo) {
 };
 
 // dependencies.js
-container.add('bar', function () {
+container.add('bar', function (c) {
     var Bar = require('./path/to/bar');
     // use #get() to obtain the service object Foo and inject using the constructor
-    return new Bar(container.get('foo'));
+    return new Bar(c.get('foo'));
 });
 ```
 
@@ -180,14 +187,17 @@ module.exports = function () {
 };
 
 // dependencies.js
-container.add('bar', function () {
+container.add('bar', function (c) {
     var Bar = require('./path/to/bar');
     var bar = new Bar();
     // use #get() to obtain the service object Foo and inject using the setter #setFoo()
-    bar.setFoo(container.get('foo');
+    bar.setFoo(c.get('foo');
     return bar;
 });
 ```
+
+The container is automatically passed to factory and service locators. You can use it by simply including a function
+parameter as in the example above (the parameter "c" is the container).
 
 ### Parameters
 
