@@ -6,15 +6,15 @@
   "author": "Dallas Ewing",
   "scripts": {
     "start": "node ./example/main.js",
-    "test": "./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha -- -R spec"
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/jasmine"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dalane/di.git"
   },
   "devDependencies": {
-    "istanbul": "^0.4.2",
-    "mocha": "2.3.x"
+    "istanbul": "^1.0.0-alpha",
+    "jasmine": "^2.4.1"
   },
   "license": "GPL-3.0",
   "bugs": {
