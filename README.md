@@ -1,8 +1,8 @@
 # A Dependency Injection Container for Node.js Applications
 
-This is a small dependency injection container for Node.js that was quickly cobbled together after spending a little bit
-of time using require statements and realising that it could pretty quickly lead to dependency hell. It was inspired by
-the Pimple PHP dependency injection container.
+This is a small dependency injection container for Node.js that was cobbled together in order to practice node.js, 
+debugging and unit testing, etc of javascript applications. It was inspired by the Pimple PHP dependency injection 
+container.
 
 ## Dependency Injection
 
@@ -92,19 +92,27 @@ The dependency injection container can be used to:
 - retrieve stored parameters.
 
 It is suggested that the dependency injection container is populated with the service locators and parameters in a single
-location. An example would be to use a "dependencies.js" file and then use "require('./path/to/dependencies.js')" in your
+location. An example would be to use a "dependencies.js" file where you define all of your object dependencies and then require in your
 main application file.
 
 ```javascript
 // dependencies.js
 
-var Container = require('dalane-addiction');
-var container = new Container();
+var nodeDi = require('@dalane/node-di');
+var container = nodeDi.getContainer();
 
 // register service locators and parameters
 ...
 
 module.exports = container;
+```
+
+With all of your dependencies mapped in the container you could write your application so that you can simply do this...
+
+```javascript
+var container = require('./path/to/dependencies.js');
+var application = container.get('my-application');
+application.run();
 ```
 
 ### Adding service locators
@@ -217,11 +225,11 @@ container.add('config', {
 ```
 
 Functions can also be added as parameters. However, to prevent them from being invoked by the container they need to be
-added using the callable wrapper.
+added using the parameter wrapper.
 
 ```javascript
-// wrap the function to be returned as a parameter using #callable()
-container.add('function_as_parameter', container.callable(function () {
+// wrap the function to be returned as a parameter using #parameter()
+container.add('function_as_parameter', container.parameter(function () {
     // do something
 });
 ```
@@ -230,7 +238,7 @@ Parameters are obtained from the container also using the #get() method.
 
 ### Tagging
 
-It is possible to add tags to service locators, parameters, factories and callables. Simply include an array of tag names
+It is possible to add tags to service locators, parameters and factories. Simply include an array of tag names
 when adding the dependency to the container.
 
 ```javascript

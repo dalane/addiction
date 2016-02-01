@@ -1,35 +1,16 @@
 "use strict";
+
 var Container = require("../lib/container");
-
-var assert = require('assert');
-
-var mock = function () {
-    this._name = '_foo';
-    this.setName = function (name) {
-        this._name = name;
-    };
-    this.getName = function () {
-        return this._name;
-    };
-};
-
-var Foo = function () {
-    this.name = '_foo';
-};
-
-var Bar = function (foo) {
-    this.name = 'bar';
-    this._foo = foo;
-    this.getFoo = function () {
-        return this._foo;
-    }
-};
+var MemoryStore = require('../lib/memory-store');
+var TagStore = require('../lib/tag-store');
+var WrapperFactory = require('../lib/wrapper-factory');
+var Wrapper = require('../lib/wrapper');
 
 describe('Container', function() {
     describe('#service()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -38,7 +19,7 @@ describe('Container', function() {
             var result = container.service(function () {
                 return 'string';
             });
-            expect(typeof result).toBe('object');
+            expect(result instanceof Wrapper).toBe(true);
             expect(result.getType()).toBe('service');
             expect(typeof result.getValue()).toBe('function');
             expect(result.getValue()()).toBe('string');
@@ -50,7 +31,7 @@ describe('Container', function() {
     describe('#parameter()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
              container = null;
@@ -59,7 +40,7 @@ describe('Container', function() {
             var result = container.parameter(function () {
                 return 'string';
             });
-            expect(typeof result).toBe('object');
+            expect(result instanceof Wrapper).toBe(true);
             expect(result.getType()).toBe('parameter');
             expect(typeof result.getValue()).toBe('function');
             expect(result.getValue()()).toBe('string');
@@ -71,7 +52,7 @@ describe('Container', function() {
     describe('#factory()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -92,7 +73,7 @@ describe('Container', function() {
             var result = container.factory(function () {
                 return new Object();
             });
-            expect(typeof result).toBe('object');
+            expect(result instanceof Wrapper).toBe(true);
             expect(result.getType()).toBe('factory');
             expect(typeof result.getValue()).toBe('function');
             expect(result.isServiceLocator()).toBe(false);
@@ -103,7 +84,7 @@ describe('Container', function() {
     describe("#add()", function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -220,7 +201,7 @@ describe('Container', function() {
     describe('#tagged()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -259,7 +240,7 @@ describe('Container', function() {
     describe('#get()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -276,6 +257,13 @@ describe('Container', function() {
                 container.get(name);
             };
             expect(test).toThrowError(RangeError, 'The requested dependency "' + name + '" has not been registered. Try checking spelling or correct use of upper and lower case characters.');
+        });
+        it('Should throw an exception if the service locator does not return a value', function () {
+            container.add('service_locator', function () {});
+            var test = function () {
+                var result = container.get('service_locator');
+            };
+            expect(test).toThrowError(TypeError, 'The service locator \'service_locator\' does not return a value.');
         });
         it('Should return the service object if a service locator function was added', function () {
             container.add('service_locator', function () {
@@ -328,7 +316,7 @@ describe('Container', function() {
             container.add('factory', factory);
             var result_one = container.get('factory');
             var result_two = container.get('factory');
-            expect((result_one == result_two)).toBe(false);
+            expect((result_one != result_two)).toBeTruthy();
         });
         it("Should inject the container into any service locator or factory", function () {
             container.add('injected_container', function (c) {
@@ -367,7 +355,7 @@ describe('Container', function() {
     describe('#remove()', function () {
         var container = null;
         beforeEach(function() {
-            container = new Container();
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
         });
         afterEach(function() {
             container = null;
@@ -385,13 +373,20 @@ describe('Container', function() {
             };
             expect(test).toThrowError(RangeError, 'The requested dependency "' + non_existent_name + '" has not been registered. Try checking spelling or correct use of upper and lower case characters.');
         });
-        it("Should remove references to service locators, factories, callables and parameters", function () {
+        it("Should remove references to service locators, cached service objects, factories, callables and parameters", function () {
             container.add('factory', container.factory(function () {
                 return {};
             }));
             container.add('parameter', container.parameter(function () {}));
             container.add('parameter', 'string');
-            container.add('service', function () {});
+            container.add('service', function () {
+                // make sure our service locator returns a value or else it will throw an error when we call it
+                // and the container tries to add an undefined response to the cache.
+                return {
+                    object: 'object_to_cache'
+                };
+            });// make sure we cache a result so we can see in code coverage if this branch is called
+            var result = container.get('service');
             container.remove('factory');
             container.remove('parameter');
             container.remove('service');
