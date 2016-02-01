@@ -1,10 +1,10 @@
 "use strict";
 
 // get the object class for the dependency injection container
-var Container = require('../lib/Container');
+var nodeDi = require('../lib/node-di');
 
-// instantiate a new container
-var container = new Container();
+// get the container
+var container = nodeDi.getContainer();
 
 // load the config.json file and add it to the container
 var config = require('./config.json');
