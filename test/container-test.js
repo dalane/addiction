@@ -15,6 +15,12 @@ describe('Container', function() {
         afterEach(function() {
             container = null;
         });
+        it("Should throw a TypeError if attempting to create a service using a non function", function () {
+            var test = function () {
+                container.service('string');
+            };
+            expect(test).toThrowError(TypeError, 'The service must be a function.');
+        });
         it("Should return a wrapper that contains the correct values", function () {
             var result = container.service(function () {
                 return 'string';

@@ -3,6 +3,45 @@
 var TagsStore = require('../lib/tag-store');
 
 describe("TagsStore", function () {
+    describe("#add", function () {
+        var tagsStore = null;
+        beforeEach(function () {
+            tagsStore = new TagsStore();
+        });
+        afterEach(function () {
+            tagsStore = undefined;
+        });
+        it("Should throw an exception if tag name is not a string", function () {
+            var tag_names = [
+                1.1,
+                true,
+                [],
+                {},
+                null
+            ];
+            tag_names.forEach(function (name, index) {
+                var test = function () {
+                    tagsStore.add(name, []);
+                };
+                expect(test).toThrowError(TypeError, 'name must be a string.')
+            });
+        });
+        it("Should throw an exception if tags value is not an array", function () {
+            var tag_values = [
+                1.1,
+                true,
+                "string",
+                {},
+                null
+            ];
+            tag_values.forEach(function (tag, index) {
+                var test = function () {
+                    tagsStore.add('foo', tag)
+                };
+                expect(test).toThrowError(TypeError, 'tags must be an array')
+            });
+        });
+    });
     describe("#findByTag", function () {
         var tagsStore = null;
         beforeEach(function () {

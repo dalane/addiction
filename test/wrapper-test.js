@@ -49,6 +49,18 @@ describe("Testing Wrapper class", function () {
                 expect(test).not.toThrowError();
             });
         });
+        it("Should generate a TypeError if factory type is specified and value is not a function", function () {
+            var test = function () {
+                var wrapper = new Wrapper('factory', 'parameter');
+            };
+            expect(test).toThrowError(TypeError, "The value to be wrapped as a factory or service must be a function.");
+        });
+        it("Should generate a TypeError if service type is specified and value is not a function", function () {
+            var test = function () {
+                var wrapper = new Wrapper('service', 'parameter');
+            };
+            expect(test).toThrowError(TypeError, "The value to be wrapped as a factory or service must be a function.");
+        });
     });
     describe("#getType", function () {
         it("Should return the type set on instantiation", function () {
