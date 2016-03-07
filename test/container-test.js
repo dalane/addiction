@@ -358,6 +358,101 @@ describe('Container', function() {
             expect(expected_bar.getMessage()).toBe('foo');
         });
     });
+    describe('#get() using container property', function () {
+        var container = null;
+        beforeEach(function() {
+            container = new Container(new MemoryStore(), new MemoryStore(), new TagStore(), new WrapperFactory());
+        });
+        afterEach(function() {
+            container = null;
+        });
+        it('Should return the service object if a service locator function was added', function () {
+            container.add('service_locator', function () {
+                return new Object();
+            });
+            var result = container.service_locator;
+            expect(typeof result).toBe('object');
+        });
+        it('Should return the string value if a string parameter was added', function () {
+            container.add('string_value', 'string_value');
+            var result = container.string_value;
+            expect(typeof result).toBe('string');
+            expect(result).toBe('string_value');
+        });
+        it('Should return the numeric value if a number parameter was added', function () {
+            container.add('number_value', 1);
+            var result = container.number_value;
+            expect(typeof result).toBe('number');
+            expect(result).toBe(1);
+        });
+        it('Should return the object hash if a hash parameter was added', function () {
+            container.add('hash_value', {
+                name: 'name'
+            });
+            var result = container.hash_value;
+            expect(typeof result).toBe('object');
+            expect(result.name).toBe('name');
+        });
+        it('Should return a cached service object rather than invoke the service locator', function () {
+            container.add('object_value', function () {
+                return new Object();
+            });
+            var result_one = container.object_value;
+            var result_two = container.object_value;
+            expect((result_one == result_two)).toBe(true);
+        });
+        it('Should return the function that has been wrapped by #parameter() before being added', function () {
+            container.add('callable_value', container.parameter(function () {
+                return '_foo';
+            }));
+            var result = container.callable_value;
+            expect(typeof result).toBe('function');
+            expect(result()).toBe('_foo');
+        });
+        it('Should return a new service object if the function has been wrapped by #factory before being added', function () {
+            var test_function = function () {
+                return new Object();
+            };
+            var factory = container.factory(test_function);
+            container.add('factory_value', factory);
+            var result_one = container.factory_value;
+            var result_two = container.factory_value;
+            expect((result_one != result_two)).toBeTruthy();
+        });
+        it("Should inject the container into any service locator or factory", function () {
+            container.add('injected_container', function (c) {
+                return (c instanceof Container);
+            });
+            var result = container.injected_container;
+            expect(result).toBe(true);
+        });
+        it('Should return an object with all of its dependencies automatically populated', function () {
+            var Foo = function () {};
+            Foo.prototype.getMessage = function () {
+                return "foo";
+            };
+            var Bar = function (foo) {
+                this._foo = foo;
+            };
+            Bar.prototype.getMessage= function () {
+                return this._foo.getMessage();
+            };
+            Bar.prototype.getFoo = function () {
+                return this._foo;
+            };
+            container.add('foo', function () {
+                return new Foo();
+            });
+            container.add('bar', function (c) {
+                return new Bar(c.foo);
+            });
+            var expected_bar = container.bar;
+            var expected_foo = expected_bar.getFoo();
+            expect(expected_bar instanceof Bar).toBe(true);
+            expect(expected_foo instanceof Foo).toBe(true);
+            expect(expected_bar.getMessage()).toBe('foo');
+        });
+    });
     describe('#remove()', function () {
         var container = null;
         beforeEach(function() {
