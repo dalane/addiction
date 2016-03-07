@@ -144,6 +144,12 @@ Obtaining a service object is simply a matter of calling the #get() method with 
 var foo = container.get('foo');
 ```
 
+or
+
+```javascript
+var foo = container.foo;
+```
+
 The first time a service object is requested it will be invoked and the result will be cached. Subsequent requests
 will return the cached value (making it a singleton). To return a newly created service object for every request, the service 
 locator needs to be first added using the #factory() wrapper before being added to the container.
