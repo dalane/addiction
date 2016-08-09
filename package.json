@@ -1,6 +1,6 @@
 {
   "name": "@dalane/node-di",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A dependency injection container for Node.js applications.",
   "main": "./lib/node-di.js",
   "author": "Dallas Ewing <developers@dalane.io>",
