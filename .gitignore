@@ -1,5 +1,6 @@
 .git
 .idea
+.jshintrc
 coverage
 node_modules
 npm-debug.log

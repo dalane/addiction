@@ -1,7 +1,7 @@
 # A Dependency Injection Container for Node.js Applications
 
-This is a small dependency injection container for Node.js that was cobbled together in order to practice node.js, 
-debugging and unit testing, etc of javascript applications. It was inspired by the Pimple PHP dependency injection 
+This is a small dependency injection container for Node.js that was cobbled together in order to practice node.js,
+debugging and unit testing, etc of javascript applications. It was inspired by the Pimple PHP dependency injection
 container.
 
 ## Dependency Injection
@@ -17,11 +17,11 @@ var Foo = function () {
 };
 ```
 
-However, using dependency injection the creation of the service object is done outside of the client and then 
+However, using dependency injection the creation of the service object is done outside of the client and then
 "injected" into the client either through the constructor ("constructor injection") or a setter ("setter injection").
 
 ```javascript
-// the client object Foo needs the Bar service object. Bar is created outside Foo and then injected using 
+// the client object Foo needs the Bar service object. Bar is created outside Foo and then injected using
 // a constructor parameter
 var Foo = function (bar) {
     this.bar = bar;
@@ -37,7 +37,7 @@ The reason why you should use dependency injection is that it offers: flexibilit
 
 #### Flexibility
 
-Your objects are no longer bound to one explicit class. As your application evolves you can provide whatever service object you want (as long as it 
+Your objects are no longer bound to one explicit class. As your application evolves you can provide whatever service object you want (as long as it
 implements the same interface that the client object depends on).
 
 #### Reusability
@@ -56,7 +56,7 @@ into the test.
 
 ### Using a dependency injection container
 
-When all service locators are defined and retrieved using a dependency injection container all of the dependencies 
+When all service locators are defined and retrieved using a dependency injection container all of the dependencies
 for a program are automatically managed whenever the program is run.
 
 ## Installing
@@ -85,7 +85,7 @@ will give an idea of how to use the container.
 ## Usage
 
 The dependency injection container can be used to:
- 
+
 - add service locators (functions that return service objects);
 - add parameters;
 - obtain service objects; and
@@ -117,7 +117,7 @@ application.run();
 
 ### Adding service locators
 
-Service objects are obtained through service locators. These service locators are functions that return a service 
+Service objects are obtained through service locators. These service locators are functions that return a service
 object.
 
 ```javascript
@@ -151,7 +151,7 @@ var foo = container.foo;
 ```
 
 The first time a service object is requested it will be invoked and the result will be cached. Subsequent requests
-will return the cached value (making it a singleton). To return a newly created service object for every request, the service 
+will return the cached value (making it a singleton). To return a newly created service object for every request, the service
 locator needs to be first added using the #factory() wrapper before being added to the container.
 
 ```javascript
@@ -213,6 +213,18 @@ container.add('bar', function (c) {
 The container is automatically passed to factory and service locators. You can use it by simply including a function
 parameter as in the example above (the parameter "c" is the container).
 
+Factories can be passed additional arguments using the method #get() allowing dynamic factories to be added.
+
+```javascript
+// add arguments to a factory
+container.add('bar', container.factory(function (c, param1, param2) {
+    var Bar = require('./path/to/bar');
+    return new Bar(param1, param2);
+}));
+var service_object = container.get('factory', param1, param2, ...);
+
+```
+
 ### Parameters
 
 Parameters can be added to the container too.
@@ -258,7 +270,7 @@ var array_of_dependency_names = container.tagged('tag_1');
 // returns ['foo']
 ```
 
-##About us
+## About us
 
-We are [Dalane Consulting Ltd](http://www.dalane.co.uk). A project management consulting firm based in the United 
+We are [Dalane Consulting Ltd](http://www.dalane.co.uk). A project management consulting firm based in the United
 Kingdom developing tools for our own and our clients use.

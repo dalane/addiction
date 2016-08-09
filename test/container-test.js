@@ -331,6 +331,21 @@ describe('Container', function() {
             var result = container.get('injected_container');
             expect(result).toBe(true);
         });
+        it("Should inject other arguments onto the factory when invoked", function () {
+            container.add('param_factory', container.factory(function (c, param1, param2) {
+                return [
+                    c,
+                    param1,
+                    param2
+                ];
+            }));
+            var param1 = 'this is param 1';
+            var param2 = 'this is param 2';
+            var result = container.get('param_factory', param1, param2);
+            expect(result[0] instanceof Container).toBe(true);
+            expect(result[1]).toBe(param1);
+            expect(result[2]).toBe(param2);
+        });
         it('Should return an object with all of its dependencies automatically populated', function () {
             var Foo = function () {};
             Foo.prototype.getMessage = function () {
