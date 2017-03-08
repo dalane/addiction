@@ -64,7 +64,7 @@ for a program are automatically managed whenever the program is run.
 Installation via [NPM](https://www.npmjs.com) is recommended as follows.
 
 ```shell
-npm install @dalane/node-di --save
+npm install @dalane/javascript-di --save
 ```
 
 You can run the unit tests
@@ -98,8 +98,8 @@ main application file.
 ```javascript
 // dependencies.js
 
-var nodeDi = require('@dalane/node-di');
-var container = nodeDi.getContainer();
+var dic = require('@dalane/javascript-di');
+var container = dic.getContainer();
 
 // register service locators and parameters
 ...

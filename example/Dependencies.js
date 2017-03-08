@@ -1,10 +1,10 @@
 "use strict";
 
-// get the object class for the dependency injection container
-var nodeDi = require('../lib/node-di');
+// get the dependency injection container factory
+var dic = require('../lib');
 
 // get the container
-var container = nodeDi.getContainer();
+var container = dic.getContainer();
 
 // load the config.json file and add it to the container
 var config = require('./config.json');

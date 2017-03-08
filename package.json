@@ -1,8 +1,8 @@
 {
-  "name": "@dalane/node-di",
-  "version": "2.0.0",
+  "name": "@dalane/javascript-di",
+  "version": "3.0.0",
   "description": "A dependency injection container for Node.js applications.",
-  "main": "./lib/node-di.js",
+  "main": "./lib/javascript-di.js",
   "author": "Dallas Ewing <developers@dalane.io>",
   "scripts": {
     "start": "node ./example/main.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dalane/node-di.git"
+    "url": "git+https://github.com/dalane/javascript-di.git"
   },
   "devDependencies": {
     "istanbul": "^1.0.0-alpha",
