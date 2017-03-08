@@ -2,7 +2,7 @@
   "name": "@dalane/javascript-di",
   "version": "3.0.0",
   "description": "A dependency injection container for Node.js applications.",
-  "main": "./lib/javascript-di.js",
+  "main": "./lib",
   "author": "Dallas Ewing <developers@dalane.io>",
   "scripts": {
     "start": "node ./example/main.js",
@@ -18,7 +18,7 @@
   },
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/dalane/di/issues"
+    "url": "https://github.com/dalane/javascript-di/issues"
   },
-  "homepage": "https://github.com/dalane/di#readme"
+  "homepage": "https://github.com/dalane/javascript-di#readme"
 }
